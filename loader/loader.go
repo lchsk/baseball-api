@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/csv"
 	"flag"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gocql/gocql"
 )
 
 type Game struct {
@@ -469,4 +470,31 @@ func main() {
 			games = append(games, readLine(line))
 		}
 	}
+
+	session := getDBConnection()
+
+	log.Println("Inserting games")
+
+	for _, game := range games {
+		insertGame(game, session)
+	}
+
+	log.Printf("Processed %d games", len(games))
+
+}
+
+func getDBConnection() *gocql.Session {
+	var session *gocql.Session
+	var err error
+
+	cluster := gocql.NewCluster("127.0.0.1")
+	cluster.Keyspace = "baseballapi"
+
+	session, err = cluster.CreateSession()
+
+	if err != nil {
+		panic(err)
+	}
+
+	return session
 }
