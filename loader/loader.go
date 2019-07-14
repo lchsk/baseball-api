@@ -1,4 +1,4 @@
-package main
+package loader
 
 import (
 	"bufio"
@@ -13,7 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gocql/gocql"
+	"github.com/lchsk/baseball/dbconnection"
+	_ "github.com/lib/pq"
 )
 
 type Game struct {
@@ -471,30 +472,16 @@ func main() {
 		}
 	}
 
-	session := getDBConnection()
+	db := dbconnection.GetDBConnection()
 
 	log.Println("Inserting games")
 
 	for _, game := range games {
-		insertGame(game, session)
+		insertGame(game, db)
 	}
+
+	db.Close()
 
 	log.Printf("Processed %d games", len(games))
 
-}
-
-func getDBConnection() *gocql.Session {
-	var session *gocql.Session
-	var err error
-
-	cluster := gocql.NewCluster("127.0.0.1")
-	cluster.Keyspace = "baseballapi"
-
-	session, err = cluster.CreateSession()
-
-	if err != nil {
-		panic(err)
-	}
-
-	return session
 }

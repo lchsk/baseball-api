@@ -1,17 +1,21 @@
-package main
+package loader
 
 import (
-	"log"
+	"database/sql"
 
-	"github.com/gocql/gocql"
+	_ "github.com/lib/pq"
 )
 
-func insertGame(game Game, session *gocql.Session) {
-	gocqlUuid := gocql.TimeUUID()
+func insertGame(game Game, db *sql.DB) {
+	// TODO: Prepare just once
+	stmt, err := db.Prepare(query)
 
-	if err := session.Query(
-		query,
-		gocqlUuid,
+	if err != nil {
+		panic(err)
+	}
+
+	stmt.Exec(
+		"32cd1152-1054-4e37-ae61-383fdf43d3ff",
 		game.Date,
 		game.NumberOfGame,
 		game.DayOfWeek,
@@ -173,14 +177,16 @@ func insertGame(game Game, session *gocql.Session) {
 		game.HomePlayer9Position,
 		game.AdditionalInformation,
 		game.AcquisitionInformation,
-	).Exec(); err != nil {
-		log.Printf("Error when inserting a game: %s", err)
-	}
+	)
+
+	//	if err != nil {
+	//		panic(err)
+	//	}
 }
 
 const query = `INSERT INTO game (
 id,
-date,
+game_date,
 number_of_game,
 day_of_week,
 visiting_team,
@@ -340,23 +346,6 @@ home_player9_id       ,
 home_player9_name     ,
 home_player9_position ,
 additional_information  ,
-acquisition_information
-) VALUES (
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-?, ?
+acquisition_information) VALUES (
+$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $80, $81, $82, $83, $84, $85, $86, $87, $88, $89, $90, $91, $92, $93, $94, $95, $96, $97, $98, $99, $100, $101, $102, $103, $104, $105, $106, $107, $108, $109, $110, $111, $112, $113, $114, $115, $116, $117, $118, $119, $120, $121, $122, $123, $124, $125, $126, $127, $128, $129, $130, $131, $132, $133, $134, $135, $136, $137, $138, $139, $140, $141, $142, $143, $144, $145, $146, $147, $148, $149, $150, $151, $152, $153, $154, $155, $156, $157, $158, $159, $160, $161, $162
 )`
