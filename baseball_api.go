@@ -136,9 +136,17 @@ func getGameSummary(w http.ResponseWriter, req *http.Request) {
 			},
 		})
 	}
+
 	json.NewEncoder(w).Encode(GameSummaryResponse{
 		Status: ResponseStatusSuccess,
 		Data:   data,
+	})
+}
+
+func commonMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -147,9 +155,9 @@ func main() {
 	dbconnection.PrepareQueries(db)
 
 	router := mux.NewRouter()
+	router.Use(commonMiddleware)
 	router.HandleFunc("/api/games/{gameId}", getGameSummary).Methods("GET")
 
 	log.Println("Serving api")
 	log.Fatal(http.ListenAndServe(":8000", router))
-
 }
