@@ -147,7 +147,10 @@ func getGameSummary(w http.ResponseWriter, req *http.Request) {
 
 func commonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
 		w.Header().Add("Content-Type", "application/json")
+
+		log.Println(fmt.Sprintf("%s %s", r.Method, r.RequestURI))
 		next.ServeHTTP(w, r)
 	})
 }
@@ -157,9 +160,8 @@ func main() {
 	dbconnection.PrepareQueries(db)
 
 	router := mux.NewRouter()
-	router.Use(commonMiddleware)
-	router.HandleFunc("/api/games/{gameId}", getGameSummary).Methods("GET")
+	router.HandleFunc("/api/games/{gameId}", getGameSummary).Methods(http.MethodGet)
 
 	log.Println("Serving api")
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":8000", commonMiddleware(router)))
 }
