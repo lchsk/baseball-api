@@ -8,7 +8,7 @@ GRANT ALL PRIVILEGES ON DATABASE baseball TO user1;
 -- GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO user1;
 
 create table game (
-id UUID,
+id varchar,
 game_date date,
 number_of_game varchar,
 day_of_week varchar,
@@ -189,7 +189,9 @@ home_player9_name     varchar,
 home_player9_position int,
 
 additional_information  varchar,
-acquisition_information varchar
+acquisition_information varchar,
 
--- primary key(game_date, visiting_team, home_team, id)
+primary key(visiting_team, home_team, game_date, number_of_game)
 );
+
+create index i_game_date_teams on game(visiting_team, home_team, game_date)

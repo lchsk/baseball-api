@@ -2,7 +2,7 @@ package dbconnection
 
 import "database/sql"
 
-const selectGameByDate = `select * from game where game_date = $1 and visiting_team = $2 and home_team = $3`
+const selectGameByDate = `select * from game where visiting_team = $1 and home_team = $2 and game_date = $3 `
 
 var Statements = make(map[string]*sql.Stmt)
 

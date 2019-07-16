@@ -2,22 +2,21 @@ package main
 
 import (
 	"github.com/lchsk/baseball/dbconnection"
-	"github.com/lchsk/baseball/loader"
 )
 
-func loadGames(gameDate string, visitingTeam string, homeTeam string) []loader.Game {
+func loadGames(gameDate string, visitingTeam string, homeTeam string) []Game {
 	stmt := dbconnection.Statements["selectGameByDate"]
 
-	rows, err := stmt.Query(gameDate, visitingTeam, homeTeam)
+	rows, err := stmt.Query(visitingTeam, homeTeam, gameDate)
 
 	if err != nil {
 		panic(err)
 	}
 
-	games := []loader.Game{}
+	games := []Game{}
 
 	for rows.Next() {
-		var game loader.Game
+		var game Game
 		var uuid string
 
 		// TODO: Error handling

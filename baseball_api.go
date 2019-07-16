@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -155,7 +156,7 @@ func commonMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func main() {
+func serveAPI() {
 	db = dbconnection.GetDBConnection()
 	dbconnection.PrepareQueries(db)
 
@@ -164,4 +165,18 @@ func main() {
 
 	log.Println("Serving api")
 	log.Fatal(http.ListenAndServe(":8000", commonMiddleware(router)))
+}
+
+func main() {
+	var loadData = flag.Bool("load-data", false, "Load game log data")
+	var gameLogsDir = flag.String("game-logs", "./", "Path to game logs directory")
+
+	flag.Parse()
+
+	if *loadData {
+		loadGameLogs(*gameLogsDir)
+		return
+	}
+
+	serveAPI()
 }
