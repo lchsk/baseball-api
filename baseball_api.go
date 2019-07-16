@@ -173,8 +173,6 @@ func commonMiddleware(next http.Handler) http.Handler {
 }
 
 func serveAPI() {
-	db = dbconnection.GetDBConnection()
-	dbconnection.PrepareQueries(db)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/api/v1/games/{date}/{teams}", getGameSummary).Methods(http.MethodGet)
@@ -185,12 +183,22 @@ func serveAPI() {
 
 func main() {
 	var loadData = flag.Bool("load-data", false, "Load game log data")
-	var gameLogsDir = flag.String("game-logs", "./", "Path to game logs directory")
+	var gameLogsDir = flag.String("game-logs", "", "Path to game logs directory")
+	var teamsFile = flag.String("teams", "", "Path to teams file")
 
 	flag.Parse()
 
+	db = dbconnection.GetDBConnection()
+	dbconnection.PrepareQueries(db)
 	if *loadData {
-		loadGameLogs(*gameLogsDir)
+		if *gameLogsDir != "" {
+			loadGameLogs(*gameLogsDir)
+		}
+
+		if *teamsFile != "" {
+			loadTeams(*teamsFile)
+		}
+
 		return
 	}
 

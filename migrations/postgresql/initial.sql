@@ -193,4 +193,16 @@ acquisition_information varchar,
 primary key(visiting_team, home_team, game_date, number_of_game)
 );
 
-create index i_game_date_teams on game(visiting_team, home_team, game_date)
+create index i_game_date_teams on game(visiting_team, home_team, game_date);
+
+-- Teams
+
+create table team (
+    team_symbol varchar,
+    founded int,
+    league varchar,
+    location varchar,
+    name varchar,
+
+    primary key(team_symbol)
+);
