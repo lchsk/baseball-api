@@ -180,7 +180,7 @@ func serveAPI() {
 	dbconnection.PrepareQueries(db)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/api/games/{date}/{teams}", getGameSummary).Methods(http.MethodGet)
+	router.HandleFunc("/api/v1/games/{date}/{teams}", getGameSummary).Methods(http.MethodGet)
 
 	log.Println("Serving api")
 	log.Fatal(http.ListenAndServe(":8000", commonMiddleware(router)))
