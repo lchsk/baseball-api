@@ -17,8 +17,6 @@ import (
 
 var db *sql.DB
 
-const ResponseStatusSuccess = "success"
-
 type Person struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -58,36 +56,58 @@ type GameSummary struct {
 }
 
 type GameSummaryResponse struct {
-	Status string        `json:"status"`
-	Data   []GameSummary `json:"data"`
+	Games []GameSummary `json:"games"`
+}
+
+type Error struct {
+	Message string `json:"message"`
+}
+
+type GameSummaryError struct {
+	Errors []Error `json:"errors"`
 }
 
 func getGameSummary(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 
-	gameID := params["gameId"]
+	date := params["date"]
+	teams := strings.Split(params["teams"], "@")
 
-	gameIdentifiers := strings.Split(gameID, "-")
+	if len(teams) != 2 {
+		w.WriteHeader(400)
 
-	// TODO: Add error handling
-	if len(gameIdentifiers) != 5 {
-		panic("invalid game identifier")
+		json.NewEncoder(w).Encode(GameSummaryError{
+			Errors: []Error{{Message: "Must provide two teams"}},
+		})
+		return
 	}
 
-	visitingTeam := gameIdentifiers[0]
-	homeTeam := gameIdentifiers[1]
-	year := gameIdentifiers[2]
-	month := gameIdentifiers[3]
-	day := gameIdentifiers[4]
+	visitingTeam := teams[0]
+	homeTeam := teams[1]
 
-	date := fmt.Sprintf("%s-%s-%s", year, month, day)
+	games, err := loadGames(date, visitingTeam, homeTeam)
 
-	games := loadGames(date, visitingTeam, homeTeam)
+	if err != nil {
+		w.WriteHeader(400)
+
+		json.NewEncoder(w).Encode(GameSummaryError{
+			Errors: []Error{{Message: "Invalid input"}},
+		})
+		return
+	}
+	if len(games) == 0 {
+		w.WriteHeader(404)
+
+		json.NewEncoder(w).Encode(GameSummaryError{
+			Errors: []Error{{Message: "No games were found"}},
+		})
+		return
+	}
 
 	var data []GameSummary
 
 	for _, game := range games {
-		uniqueGameID := fmt.Sprintf("%s-%s", gameID, game.NumberOfGame)
+		uniqueGameID := fmt.Sprintf("%s-%s", "ulalal", game.NumberOfGame)
 		data = append(data, GameSummary{
 			ID:           uniqueGameID,
 			Date:         game.Date.Format("2006-01-02"),
@@ -141,8 +161,7 @@ func getGameSummary(w http.ResponseWriter, req *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(GameSummaryResponse{
-		Status: ResponseStatusSuccess,
-		Data:   data,
+		Games: data,
 	})
 }
 
@@ -161,7 +180,7 @@ func serveAPI() {
 	dbconnection.PrepareQueries(db)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/api/games/{gameId}", getGameSummary).Methods(http.MethodGet)
+	router.HandleFunc("/api/games/{date}/{teams}", getGameSummary).Methods(http.MethodGet)
 
 	log.Println("Serving api")
 	log.Fatal(http.ListenAndServe(":8000", commonMiddleware(router)))

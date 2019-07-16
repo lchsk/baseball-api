@@ -1,25 +1,27 @@
 package main
 
 import (
+	"log"
+
 	"github.com/lchsk/baseball/dbconnection"
 )
 
-func loadGames(gameDate string, visitingTeam string, homeTeam string) []Game {
+func loadGames(gameDate string, visitingTeam string, homeTeam string) ([]Game, error) {
 	stmt := dbconnection.Statements["selectGameByDate"]
 
 	rows, err := stmt.Query(visitingTeam, homeTeam, gameDate)
 
-	if err != nil {
-		panic(err)
-	}
-
 	games := []Game{}
+
+	if err != nil {
+		log.Printf("ERROR %s", err)
+		return games, err
+	}
 
 	for rows.Next() {
 		var game Game
 		var uuid string
 
-		// TODO: Error handling
 		rows.Scan(
 			&uuid,
 			&game.Date,
@@ -188,5 +190,5 @@ func loadGames(gameDate string, visitingTeam string, homeTeam string) []Game {
 		games = append(games, game)
 	}
 
-	return games
+	return games, nil
 }
