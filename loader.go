@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -428,10 +427,6 @@ func readLine(line []string) *Game {
 		AdditionalInformation:  line[159],
 		AcquisitionInformation: line[160],
 	}
-}
-
-func getUniqueGameID(game *Game) string {
-	return fmt.Sprintf("%s-%s-%s-%s", game.VisitingTeam, game.HomeTeam, game.Date.Format("2006-01-02"), game.NumberOfGame)
 }
 
 func getGameLogsFiles(dir string) ([]string, error) {

@@ -20,10 +20,8 @@ func loadGames(gameDate string, visitingTeam string, homeTeam string) ([]Game, e
 
 	for rows.Next() {
 		var game Game
-		var uuid string
 
 		rows.Scan(
-			&uuid,
 			&game.Date,
 			&game.NumberOfGame,
 			&game.DayOfWeek,

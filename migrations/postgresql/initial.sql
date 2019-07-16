@@ -8,7 +8,6 @@ GRANT ALL PRIVILEGES ON DATABASE baseball TO user1;
 -- GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO user1;
 
 create table game (
-id varchar,
 game_date date,
 number_of_game varchar,
 day_of_week varchar,

@@ -35,7 +35,6 @@ type GameSummaryTeam struct {
 }
 
 type GameSummary struct {
-	ID   string `json:"id"`
 	Date string `json:"date"`
 	// TODO: Consider different field name, double_header_information?
 	NumberOfGame         string          `json:"number_of_game"`
@@ -107,9 +106,7 @@ func getGameSummary(w http.ResponseWriter, req *http.Request) {
 	var data []GameSummary
 
 	for _, game := range games {
-		uniqueGameID := fmt.Sprintf("%s-%s", "ulalal", game.NumberOfGame)
 		data = append(data, GameSummary{
-			ID:           uniqueGameID,
 			Date:         game.Date.Format("2006-01-02"),
 			NumberOfGame: game.NumberOfGame,
 			DayOfWeek:    game.DayOfWeek,
