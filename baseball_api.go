@@ -15,7 +15,9 @@ import (
 	"github.com/lchsk/baseball/dbconnection"
 )
 
+// TODO: Put them in a struct
 var db *sql.DB
+var TEAMS map[string]*RawTeam
 
 type Person struct {
 	ID   string `json:"id"`
@@ -24,14 +26,16 @@ type Person struct {
 }
 
 type GameSummaryTeam struct {
-	// Team name
-	Symbol     string `json:"symbol"`
-	League     string `json:"league"`
-	GameNumber int    `json:"game_number"`
-	Score      int    `json:"score"`
-	Hits       int    `json:"hits"`
-	Errors     int    `json:"errors"`
-	Manager    Person `json:"manager"`
+	Symbol       string `json:"symbol"`
+	FullTeamName string `json:"full_team_name"`
+	TeamName     string `json:"team_name"`
+	TeamLocation string `json:"team_location"`
+	League       string `json:"league"`
+	GameNumber   int    `json:"game_number"`
+	Score        int    `json:"runs"`
+	Hits         int    `json:"hits"`
+	Errors       int    `json:"errors"`
+	Manager      Person `json:"manager"`
 }
 
 type GameSummary struct {
@@ -106,29 +110,58 @@ func getGameSummary(w http.ResponseWriter, req *http.Request) {
 	var data []GameSummary
 
 	for _, game := range games {
+		// TODO: Move it away from here
+		visitingFullTeamName := ""
+		visitingTeamName := ""
+		visitingTeamLocation := ""
+		visitingTeamData, ok := TEAMS[game.VisitingTeam]
+
+		if ok {
+			visitingFullTeamName = fmt.Sprintf("%s %s", visitingTeamData.Location, visitingTeamData.Name)
+			visitingTeamLocation = visitingTeamData.Location
+			visitingTeamName = visitingTeamData.Name
+		}
+
+		homeFullTeamName := ""
+		homeTeamName := ""
+		homeTeamLocation := ""
+		homeTeamData, ok := TEAMS[game.HomeTeam]
+
+		if ok {
+			homeFullTeamName = fmt.Sprintf("%s %s", homeTeamData.Location, homeTeamData.Name)
+			homeTeamLocation = homeTeamData.Location
+			homeTeamName = homeTeamData.Name
+		}
+
 		data = append(data, GameSummary{
 			Date:         game.Date.Format("2006-01-02"),
 			NumberOfGame: game.NumberOfGame,
 			DayOfWeek:    game.DayOfWeek,
 			VisitingTeam: GameSummaryTeam{
-				Symbol:     game.VisitingTeam,
-				League:     game.VisitingTeamLeague,
-				GameNumber: game.VisitingGameNumber,
-				Score:      game.VisitingTeamScore,
-				Hits:       game.VisitingH,
-				Errors:     game.VisitingErrors,
+				Symbol:       game.VisitingTeam,
+				TeamName:     visitingTeamName,
+				TeamLocation: visitingTeamLocation,
+				FullTeamName: visitingFullTeamName,
+				League:       game.VisitingTeamLeague,
+				GameNumber:   game.VisitingGameNumber,
+				Score:        game.VisitingTeamScore,
+				Hits:         game.VisitingH,
+				Errors:       game.VisitingErrors,
 				Manager: Person{
 					ID:   game.VisitingManagerID,
 					Name: game.VisitingManagerName,
 				},
 			},
 			HomeTeam: GameSummaryTeam{
-				Symbol:     game.HomeTeam,
-				League:     game.HomeTeamLeague,
-				GameNumber: game.HomeTeamGameNumber,
-				Score:      game.HomeTeamScore,
-				Hits:       game.HomeH,
-				Errors:     game.HomeErrors,
+				Symbol:       game.HomeTeam,
+				TeamName:     homeTeamName,
+				TeamLocation: homeTeamLocation,
+				FullTeamName: homeFullTeamName,
+				League:       game.HomeTeamLeague,
+				GameNumber:   game.HomeTeamGameNumber,
+				Score:        game.HomeTeamScore,
+				Hits:         game.HomeH,
+				Errors:       game.HomeErrors,
 				Manager: Person{
 					ID:   game.HomeManagerID,
 					Name: game.HomeManagerName,
@@ -172,6 +205,32 @@ func commonMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func loadTeamsDataFromDB() {
+	stmt := dbconnection.Statements["selectAllTeams"]
+
+	rows, err := stmt.Query()
+
+	if err != nil {
+		panic(err)
+	}
+
+	TEAMS = make(map[string]*RawTeam)
+
+	for rows.Next() {
+		var team RawTeam
+
+		rows.Scan(
+			&team.TeamSymbol,
+			&team.Founded,
+			&team.League,
+			&team.Location,
+			&team.Name,
+		)
+
+		TEAMS[team.TeamSymbol] = &team
+	}
+}
+
 func serveAPI() {
 
 	router := mux.NewRouter()
@@ -190,6 +249,9 @@ func main() {
 
 	db = dbconnection.GetDBConnection()
 	dbconnection.PrepareQueries(db)
+
+	loadTeamsDataFromDB()
+
 	if *loadData {
 		if *gameLogsDir != "" {
 			loadGameLogs(*gameLogsDir)
