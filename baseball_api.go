@@ -232,9 +232,9 @@ func loadTeamsDataFromDB() {
 }
 
 func serveAPI() {
-
 	router := mux.NewRouter()
 	router.HandleFunc("/api/v1/games/{date}/{teams}", getGameSummary).Methods(http.MethodGet)
+	router.HandleFunc("/api/v1/teams/{team}", getTeam).Methods(http.MethodGet)
 
 	log.Println("Serving api")
 	log.Fatal(http.ListenAndServe(":8000", commonMiddleware(router)))
