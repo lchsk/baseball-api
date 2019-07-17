@@ -33,7 +33,7 @@ func getTeam(w http.ResponseWriter, req *http.Request) {
 	if !ok {
 		w.WriteHeader(404)
 
-		json.NewEncoder(w).Encode(GameSummaryError{
+		json.NewEncoder(w).Encode(ResponseErrors{
 			Errors: []Error{{Message: "There is no team with that symbol"}},
 		})
 		return
