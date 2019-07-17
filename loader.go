@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lchsk/baseball/dbconnection"
+	"github.com/lchsk/baseballapi/dbconnection"
 	_ "github.com/lib/pq"
 )
 

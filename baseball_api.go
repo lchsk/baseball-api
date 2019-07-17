@@ -12,7 +12,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/gorilla/mux"
-	"github.com/lchsk/baseball/dbconnection"
+	"github.com/lchsk/baseballapi/dbconnection"
 )
 
 // TODO: Put them in a struct

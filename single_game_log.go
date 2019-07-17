@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/lchsk/baseball/dbconnection"
+	"github.com/lchsk/baseballapi/dbconnection"
 )
 
 func loadGames(gameDate string, visitingTeam string, homeTeam string) ([]Game, error) {

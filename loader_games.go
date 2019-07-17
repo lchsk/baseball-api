@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lchsk/baseball/dbconnection"
+	"github.com/lchsk/baseballapi/dbconnection"
 	_ "github.com/lib/pq"
 )
 
