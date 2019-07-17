@@ -16,10 +16,12 @@ jobs:
             - go-mod-v4-{{ checksum "go.sum" }}
 
       - run:
-          name: Run unit tests
+          name: Get deps
+          command: go get -v -t -d ./...
 
-          command: |
-            go test -v
+      - run:
+          name: Run unit tests
+          command: go test -v ./...
 
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
