@@ -59,7 +59,7 @@ func loadTeams(path string) {
 		_, err := stmt.Exec(team.TeamSymbol, team.Founded, team.League, team.Location, team.Name)
 
 		if err != nil {
-			log.Printf("Error when inserting team %s %s", team, err)
+			log.Printf("Error when inserting team %v %s", team, err)
 		}
 	}
 

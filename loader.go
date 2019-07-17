@@ -493,7 +493,7 @@ func loadGameLogs(dir string) {
 		err := insertGame(game, db)
 
 		if err != nil {
-			log.Fatalf("Error when inserting game: %s %s", game, err)
+			log.Fatalf("Error when inserting game: %v %s", game, err)
 		}
 	}
 
