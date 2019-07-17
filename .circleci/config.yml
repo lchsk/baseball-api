@@ -8,7 +8,7 @@ jobs:
       TEST_RESULTS: /tmp/test-results
 
     steps:
-      - git clone https://github.com/lchsk/baseball-api
+      - checkout
       - run: mkdir -p $TEST_RESULTS
 
       - restore_cache:
