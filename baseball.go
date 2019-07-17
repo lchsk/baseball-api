@@ -11,12 +11,13 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/gorilla/mux"
-	"github.com/lchsk/baseballapi/dbconnection"
 )
 
 // TODO: Put them in a struct
 var db *sql.DB
 var TEAMS map[string]*RawTeam
+
+// add statements
 
 func commonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +30,7 @@ func commonMiddleware(next http.Handler) http.Handler {
 }
 
 func loadTeamsDataFromDB() {
-	stmt := dbconnection.Statements["selectAllTeams"]
+	stmt := Statements["selectAllTeams"]
 
 	rows, err := stmt.Query()
 
@@ -70,8 +71,8 @@ func main() {
 
 	flag.Parse()
 
-	db = dbconnection.GetDBConnection()
-	dbconnection.PrepareQueries(db)
+	db = getDBConnection()
+	prepareQueries(db)
 
 	loadTeamsDataFromDB()
 

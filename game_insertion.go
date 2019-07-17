@@ -3,13 +3,12 @@ package main
 import (
 	"database/sql"
 
-	"github.com/lchsk/baseballapi/dbconnection"
 	_ "github.com/lib/pq"
 )
 
 func insertGame(game *Game, db *sql.DB) error {
 	// TODO: Prepare just once
-	stmt := dbconnection.Statements["insertGame"]
+	stmt := Statements["insertGame"]
 
 	_, err := stmt.Exec(
 		game.Date,

@@ -1,4 +1,4 @@
-package dbconnection
+package main
 
 import "database/sql"
 
@@ -8,7 +8,7 @@ const insertTeam = `insert into team (team_symbol, founded, league, location, na
 
 var Statements = make(map[string]*sql.Stmt)
 
-func PrepareQueries(db *sql.DB) {
+func prepareQueries(db *sql.DB) {
 	stmtSelectGameByDate, _ := db.Prepare(selectGameByDate)
 	Statements["selectGameByDate"] = stmtSelectGameByDate
 
@@ -18,11 +18,11 @@ func PrepareQueries(db *sql.DB) {
 	stmtInsertTeam, _ := db.Prepare(insertTeam)
 	Statements["insertTeam"] = stmtInsertTeam
 
-	stmtInsertGame, _ := db.Prepare(insertGame)
-	Statements["insertGeam"] = stmtInsertGame
+	stmtInsertGame, _ := db.Prepare(queryInsertGame)
+	Statements["insertGame"] = stmtInsertGame
 }
 
-const insertGame = `INSERT INTO game (
+const queryInsertGame = `INSERT INTO game (
 	game_date,
 	number_of_game,
 	day_of_week,

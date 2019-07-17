@@ -1,11 +1,11 @@
-package dbconnection
+package main
 
 import (
 	"database/sql"
 	"fmt"
 )
 
-func GetDBConnection() *sql.DB {
+func getDBConnection() *sql.DB {
 
 	host := "localhost"
 	port := 5433

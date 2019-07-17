@@ -2,12 +2,10 @@ package main
 
 import (
 	"log"
-
-	"github.com/lchsk/baseballapi/dbconnection"
 )
 
 func loadGames(gameDate string, visitingTeam string, homeTeam string) ([]Game, error) {
-	stmt := dbconnection.Statements["selectGameByDate"]
+	stmt := Statements["selectGameByDate"]
 
 	rows, err := stmt.Query(visitingTeam, homeTeam, gameDate)
 

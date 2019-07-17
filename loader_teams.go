@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/lchsk/baseballapi/dbconnection"
 	_ "github.com/lib/pq"
 )
 
@@ -51,7 +50,7 @@ func loadTeams(path string) {
 		teams = append(teams, readRawTeam(line))
 	}
 
-	stmt := dbconnection.Statements["insertTeam"]
+	stmt := Statements["insertTeam"]
 
 	log.Println("Inserting teams")
 

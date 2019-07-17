@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lchsk/baseballapi/dbconnection"
 	_ "github.com/lib/pq"
 )
 
@@ -485,7 +484,7 @@ func loadGameLogs(dir string) {
 
 	games, err := parseGames(gameLogFiles)
 
-	db := dbconnection.GetDBConnection()
+	db := getDBConnection()
 
 	log.Println("Inserting games")
 
