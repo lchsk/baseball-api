@@ -227,6 +227,20 @@ func handleNull(value string) string {
 	return value
 }
 
+// TODO: Move somewhere else
+func parseUSDate(date string) time.Time {
+	layout := "01/02/2006"
+
+	var parsedDate time.Time
+	parsedDate, err := time.Parse(layout, date)
+
+	if err != nil {
+		parsedDate = time.Unix(0, 0)
+	}
+
+	return parsedDate
+}
+
 func readLine(line []string) *Game {
 	visitingGameNumber := parseInt(line[5])
 	homeGameNumber := parseInt(line[8])

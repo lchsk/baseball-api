@@ -22,6 +22,14 @@ type GameSummaryTeam struct {
 	Manager      Person `json:"manager"`
 }
 
+type GameSummaryPark struct {
+	// Add URL
+	ParkID string `json:"venue_id"`
+	Name   string `json:"name"`
+	City   string `json:"city"`
+	State  string `json:"state"`
+}
+
 type GameSummary struct {
 	Date string `json:"date"`
 	// TODO: Consider different field name, double_header_information?
@@ -37,7 +45,7 @@ type GameSummary struct {
 	LosingPitcher        Person          `json:"losing_pitcher"`
 	SavingPitcher        Person          `json:"saving_pitcher"`
 	GameWinningRBIBatter Person          `json:"game_winning_rbi_batter"`
-	// park struct
+	Park                 GameSummaryPark `json:"venue"`
 	// line score
 	// team names
 }
@@ -109,10 +117,27 @@ func getGameSummary(w http.ResponseWriter, req *http.Request) {
 			homeTeamName = homeTeamData.Name
 		}
 
+		parkName := ""
+		parkCity := ""
+		parkState := ""
+		park, ok := PARKS[game.ParkID]
+
+		if ok {
+			parkName = park.Name
+			parkCity = park.City
+			parkState = park.State
+		}
+
 		data = append(data, GameSummary{
 			Date:         game.Date.Format("2006-01-02"),
 			NumberOfGame: game.NumberOfGame,
 			DayOfWeek:    game.DayOfWeek,
+			Park: GameSummaryPark{
+				ParkID: game.ParkID,
+				Name:   parkName,
+				City:   parkCity,
+				State:  parkState,
+			},
 			VisitingTeam: GameSummaryTeam{
 				Symbol:       game.VisitingTeam,
 				TeamName:     visitingTeamName,

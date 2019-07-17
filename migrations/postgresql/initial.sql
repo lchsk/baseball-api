@@ -206,3 +206,18 @@ create table team (
 
     primary key(team_symbol)
 );
+
+-- Parks
+
+create table park (
+    park_id varchar,
+    name varchar,
+    nickname varchar,
+    city varchar,
+    state varchar,
+    start_date date,
+    end_date date,
+    league varchar,
+
+    primary key(park_id)
+);
