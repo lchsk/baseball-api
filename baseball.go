@@ -99,6 +99,7 @@ func main() {
 	var gameLogsDir = flag.String("game-logs", "", "Path to game logs directory")
 	var teamsFile = flag.String("teams", "", "Path to teams file")
 	var parksFile = flag.String("parks", "", "Path to parks file")
+	var peopleFile = flag.String("people", "", "Path to people file")
 
 	flag.Parse()
 
@@ -119,6 +120,10 @@ func main() {
 
 		if *parksFile != "" {
 			loadParks(*parksFile)
+		}
+
+		if *peopleFile != "" {
+			loadPeople(*peopleFile)
 		}
 
 		return

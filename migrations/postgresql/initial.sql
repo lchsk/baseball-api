@@ -221,3 +221,17 @@ create table park (
 
     primary key(park_id)
 );
+
+-- People
+
+create table person (
+    person_id varchar,
+    last_name varchar,
+    first_name varchar,
+    player_debut date,
+    manager_debut date,
+    coach_debut date,
+    umpire_debut date,
+
+    primary key(person_id)
+);

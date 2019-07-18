@@ -7,6 +7,7 @@ const selectAllTeams = `select * from team`
 const selectAllParks = `select * from park`
 const insertTeam = `insert into team (team_symbol, founded, league, location, name) values ($1, $2, $3, $4, $5)`
 const insertPark = `insert into park (park_id, name, nickname, city, state, start_date, end_date, league) values ($1, $2, $3, $4, $5, $6, $7, $8)`
+const queryInsertPerson = `insert into person (person_id, last_name, first_name, player_debut, manager_debut, coach_debut, umpire_debut) values ($1, $2, $3, $4, $5, $6, $7)`
 
 var Statements = make(map[string]*sql.Stmt)
 
@@ -28,6 +29,9 @@ func prepareQueries(db *sql.DB) {
 
 	stmtInsertGame, _ := db.Prepare(queryInsertGame)
 	Statements["insertGame"] = stmtInsertGame
+
+	stmtInsertPerson, _ := db.Prepare(queryInsertPerson)
+	Statements["insertPerson"] = stmtInsertPerson
 }
 
 const queryInsertGame = `INSERT INTO game (
