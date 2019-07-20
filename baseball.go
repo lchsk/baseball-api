@@ -3,8 +3,10 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"io"
 	"log"
 	"net/http"
+	"os"
 
 	_ "github.com/lib/pq"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -112,13 +114,14 @@ func initPositionConstants() {
 }
 
 func main() {
-	log.SetOutput(&lumberjack.Logger{
+	lumberjackLog := &lumberjack.Logger{
 		Filename:   "./baseball.log",
 		MaxSize:    10, // megabytes
 		MaxBackups: 10,
 		MaxAge:     30,
 		Compress:   false,
-	})
+	}
+	log.SetOutput(io.MultiWriter(lumberjackLog, os.Stderr))
 
 	var loadData = flag.Bool("load-data", false, "Load game log data")
 	var gameLogsDir = flag.String("game-logs", "", "Path to game logs directory")
