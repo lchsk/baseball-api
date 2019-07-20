@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	_ "github.com/lib/pq"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/gorilla/mux"
 )
@@ -110,6 +111,14 @@ func initPositionConstants() {
 }
 
 func main() {
+	log.SetOutput(&lumberjack.Logger{
+		Filename:   "./baseball.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 10,
+		MaxAge:     30,
+		Compress:   false,
+	})
+
 	var loadData = flag.Bool("load-data", false, "Load game log data")
 	var gameLogsDir = flag.String("game-logs", "", "Path to game logs directory")
 	var teamsFile = flag.String("teams", "", "Path to teams file")
