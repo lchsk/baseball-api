@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math"
 	"net/http"
 	"strings"
 	"time"
@@ -37,6 +38,8 @@ func commonMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(&sw, r)
 		duration := time.Now().Sub(start)
 
-		log.Println(sw.status, r.Method, r.RequestURI, duration.Seconds()*1000)
+		// Round to milliseconds with 3 decimal places
+		durationRounded := math.Round(duration.Seconds()*1000000) / 1000
+		log.Println(sw.status, r.Method, r.RequestURI, durationRounded)
 	})
 }
