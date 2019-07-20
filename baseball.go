@@ -3,10 +3,8 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	_ "github.com/lib/pq"
 
@@ -21,16 +19,6 @@ var PositionSymbolsMap = make(map[int]string)
 var PositionNamesMap = make(map[int]string)
 
 // add statements
-
-func commonMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
-		w.Header().Add("Content-Type", "application/json")
-
-		log.Println(fmt.Sprintf("%s %s", r.Method, r.RequestURI))
-		next.ServeHTTP(w, r)
-	})
-}
 
 func loadTeamsDataFromDB() {
 	stmt := Statements["selectAllTeams"]
