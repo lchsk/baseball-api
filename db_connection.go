@@ -3,15 +3,17 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"strconv"
 )
 
 func getDBConnection() *sql.DB {
 
-	host := "localhost"
-	port := 5433
-	user := "user1"
-	password := "pass1"
-	dbname := "baseball"
+	host := os.Getenv("BASEBALL_HOST")
+	port, _ := strconv.Atoi(os.Getenv("BASEBALL_PORT"))
+	user := os.Getenv("BASEBALL_USER")
+	password := os.Getenv("BASEBALL_PASS")
+	dbname := os.Getenv("BASEBALL_DB")
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",

@@ -1,0 +1,5 @@
+export BASEBALL_HOST="localhost"
+export BASEBALL_PORT="5433"
+export BASEBALL_USER="user1"
+export BASEBALL_PASS="pass1"
+export BASEBALL_DB="baseball"
