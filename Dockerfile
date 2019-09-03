@@ -4,6 +4,8 @@ FROM golang
 
 ADD . /go/src/github.com/lchsk/baseballapi
 
+ADD ./retrosheet-baseball-data /retrosheet-baseball-data
+
 RUN go get ./...
 
 RUN go install github.com/lchsk/baseballapi
