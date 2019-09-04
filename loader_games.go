@@ -462,55 +462,60 @@ func getGameLogsFiles(dir string) ([]string, error) {
 	return gameLogFiles, nil
 }
 
-func parseGames(gameLogFiles []string) ([]*Game, error) {
+func parseGames(gameLogFilePath string) ([]*Game, error) {
 	var games []*Game
 
-	for _, path := range gameLogFiles {
-		csvFile, err := os.Open(path)
+	csvFile, err := os.Open(gameLogFilePath)
 
-		if err != nil {
-			return games, err
+	if err != nil {
+		return games, err
+	}
+
+	reader := csv.NewReader(bufio.NewReader(csvFile))
+
+	for {
+		line, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
 		}
 
-		reader := csv.NewReader(bufio.NewReader(csvFile))
-
-		for {
-			line, err := reader.Read()
-			if err == io.EOF {
-				break
-			} else if err != nil {
-				log.Fatal(err)
-			}
-
-			games = append(games, readLine(line))
-		}
+		games = append(games, readLine(line))
 	}
 
 	return games, nil
 }
 
 func loadGameLogs(dir string) {
+	db := getDBConnection()
+
 	gameLogFiles, err := getGameLogsFiles(dir)
 
 	if err != nil {
 		panic(err)
 	}
 
-	games, err := parseGames(gameLogFiles)
-
-	db := getDBConnection()
-
-	log.Println("Inserting games")
-
-	for _, game := range games {
-		err := insertGame(game, db)
+	for _, path := range gameLogFiles {
+		log.Println("Parsing games from ", path)
+		games, err := parseGames(path)
 
 		if err != nil {
-			log.Fatalf("Error when inserting game: %v %s", game, err)
+			panic(err)
 		}
+
+		log.Println("Inserting games from ", path)
+
+		for _, game := range games {
+			err := insertGame(game, db)
+
+			if err != nil {
+				log.Fatalf("Error when inserting game: %v %s", game, err)
+			}
+		}
+
+		log.Printf("Processed %d games", len(games))
 	}
 
 	db.Close()
-
-	log.Printf("Processed %d games", len(games))
 }
